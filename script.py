@@ -1,5 +1,5 @@
-from Python_tasks.HTTPClient import HTTPClient
-from Python_tasks.parser_jobs_tut_by import Parser
+from http_client import HTTPClient
+from parser_jobs_tut_by import RabotaByParser
 
 # declare variables for headers and url
 HEADERS = {
@@ -13,7 +13,7 @@ url_for_page = 'https://rabota.by/search/' \
 # Get content of the response
 response = HTTPClient.get(URL, headers=HEADERS).text
 # Get amount of response pages
-pages = Parser.amount_of_pages(response)
+pages = RabotaByParser.amount_of_pages(response)
 # Set page counter
 page = 0
 # Set list of vacancies urls
@@ -23,11 +23,11 @@ while page <= int(pages) - 1:
     # Get content of the response for defined page
     response = HTTPClient.get(f'{url_for_page}{page}', headers=HEADERS).text
     # Get lxml text for content of the response
-    lxml_text = Parser.get_lxml(response)
+    lxml_text = RabotaByParser.get_lxml(response)
     # Get list of vacancies id
-    list_id = Parser.get_list_of_vacancy_id(lxml_text)
+    list_id = RabotaByParser.get_list_of_vacancy_id(lxml_text)
     # Get list of urls of vacancies
-    list_urls_for_one_page = Parser.get_list_of_url_of_vacancies_pages_by_id(list_id)
+    list_urls_for_one_page = RabotaByParser.get_list_of_url_of_vacancies_pages_by_id(list_id)
     # Fill list of all urls
     all_urls_list += list_urls_for_one_page
     # Increment number of page
@@ -47,15 +47,15 @@ for url in all_urls_list:
     # Get content of the response
     response = HTTPClient.get(url, headers=HEADERS).text
     # Get vacancy description from the response
-    description = Parser.find_vacancy_description(response)
+    description = RabotaByParser.find_vacancy_description(response)
     # Take only text from description and make it in lowercase
     description = description.text.lower()
     # Count python in description
-    count_python = Parser.count_word('python', description)
+    count_python = RabotaByParser.count_word('python', description)
     # Count linux in description
-    count_linux = Parser.count_word('linux', description)
+    count_linux = RabotaByParser.count_word('linux', description)
     # Count flask in description
-    count_flask = Parser.count_word('flask', description)
+    count_flask = RabotaByParser.count_word('flask', description)
     # Fill dict with info about amount of mentioning for every defined word in every description
     dictionary[f'{number} vacancy'] = {'python': count_python, 'linux': count_linux, 'flask': count_flask}
     # Count all mentioning for python

@@ -3,7 +3,7 @@ import re
 from bs4 import BeautifulSoup
 
 
-class Parser:
+class RabotaByParser:
     """
     Parser for jobs.tut.by
     """

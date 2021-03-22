@@ -1,5 +1,5 @@
-from http_client import HTTPClient
-from parser_jobs_tut_by import RabotaByParser
+from clients.http_client import HTTPClient
+from models.parser_jobs_tut_by import RabotaByParser
 
 # declare variables for headers and url
 HEADERS = {

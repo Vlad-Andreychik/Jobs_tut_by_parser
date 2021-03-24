@@ -67,11 +67,12 @@ for url in all_urls_list:
     # Increment number of vacancy
     number += 1
 print(dictionary)
+print(len(all_urls_list), python, linux, flask)
 # Calculate average number of occurrence of python
-avg_python = python / int(pages)
+avg_python = python / len(all_urls_list)
 # Calculate average number of occurrence of linux
-avg_linux = linux / int(pages)
+avg_linux = linux / len(all_urls_list)
 # Calculate average number of occurrence of flask
-avg_flask = flask / int(pages)
+avg_flask = flask / len(all_urls_list)
 print(avg_python, avg_linux, avg_flask)
 

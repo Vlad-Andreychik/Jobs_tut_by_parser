@@ -95,3 +95,6 @@ class RabotaByParser:
         soup = BeautifulSoup(query_content, 'lxml')
         pages = soup.findAll('a', class_='bloko-button HH-Pager-Control')
         return pages[-1].text
+
+
+

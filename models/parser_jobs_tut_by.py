@@ -2,6 +2,8 @@ import re
 
 from bs4 import BeautifulSoup
 
+from clients.http_client import HTTPClient
+
 
 class RabotaByParser:
     """
@@ -96,5 +98,91 @@ class RabotaByParser:
         pages = soup.findAll('a', class_='bloko-button HH-Pager-Control')
         return pages[-1].text
 
+    @staticmethod
+    def get_description_for_first_vacancy():
+        headers = {
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/webkit-version (KHTML, like Gecko) '
+                          'Silk / browser - version like Chrome / chrome - version Safari / webkit - version'}
+        url = 'https://rabota.by/search/' \
+              'vacancy?L_is_autosearch=false&area=16&clusters=true&enable_snippets=true&text=python&page=0'
+        response = HTTPClient.get(url, headers=headers).text
+        lxml_text = RabotaByParser.get_lxml(response)
+        list_id = RabotaByParser.get_list_of_vacancy_id(lxml_text)
+        first_vacancy_id = list_id[0]
+        response_for_first_vacancy = HTTPClient.get(f'https://rabota.by/vacancy/{first_vacancy_id}?query=python',
+                                                    headers=headers).text
+        description = RabotaByParser.find_vacancy_description(response_for_first_vacancy)
+        return description.text.lower()
 
+    @staticmethod
+    def get_avg_occurrences_for_words():
+        headers = {
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/webkit-version (KHTML, like Gecko) '
+                          'Silk / browser - version like Chrome / chrome - version Safari / webkit - version'}
+        url_for_page = 'https://rabota.by/search/' \
+                       'vacancy?L_is_autosearch=false&area=16&clusters=true&enable_snippets=true&text=python&page='
+        url = 'https://rabota.by/search/' \
+              'vacancy?L_is_autosearch=false&area=16&clusters=true&enable_snippets=true&text=python&page=0'
+        response = HTTPClient.get(url, headers=headers).text
+        pages = RabotaByParser.amount_of_pages(response)
+        page = 0
+        all_urls_list = []
+        while page <= int(pages) - 1:
+            response = HTTPClient.get(f'{url_for_page}{page}', headers=headers).text
+            lxml_text = RabotaByParser.get_lxml(response)
+            list_id = RabotaByParser.get_list_of_vacancy_id(lxml_text)
+            list_urls_for_one_page = RabotaByParser.get_list_of_url_of_vacancies_pages_by_id(list_id)
+            all_urls_list += list_urls_for_one_page
+            page += 1
+        dictionary = {}
+        number = 1
+        python = 0
+        linux = 0
+        flask = 0
+        for ur in all_urls_list:
+            response = HTTPClient.get(ur, headers=headers).text
+            description = RabotaByParser.find_vacancy_description(response)
+            description = description.text.lower()
+            count_python = RabotaByParser.count_word('python', description)
+            count_linux = RabotaByParser.count_word('linux', description)
+            count_flask = RabotaByParser.count_word('flask', description)
+            dictionary[f'{number} vacancy'] = {'python': count_python, 'linux': count_linux, 'flask': count_flask}
+            python += count_python
+            linux += count_linux
+            flask += count_flask
+            number += 1
+        avg_python = python // len(all_urls_list)
+        avg_linux = linux // len(all_urls_list)
+        avg_flask = flask // len(all_urls_list)
+        return avg_python, avg_linux, avg_flask
 
+    @staticmethod
+    def amount_of_vacancies_founded(query):
+        """
+        Returns amount of vacancies founded from query
+        """
+        headers = {
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/webkit-version (KHTML, like Gecko) '
+                          'Silk / browser - version like Chrome / chrome - version Safari / webkit - version'}
+        url = f'https://rabota.by/search/' \
+              f'vacancy?L_is_autosearch=false&area=16&clusters=true&enable_snippets=true&text={query}&page=0'
+        response = HTTPClient.get(url, headers=headers).text
+        lxml_text = RabotaByParser.get_lxml(response)
+        h1_text = lxml_text.find('h1', class_='bloko-header-1').text
+        pattern = '\d+'
+        return int(re.findall(pattern, h1_text)[0])
+
+    @staticmethod
+    def amount_vacancies_on_one_page():
+        """
+        Returns amount of vacancies founded from query on one page
+        """
+        headers = {
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/webkit-version (KHTML, like Gecko) '
+                          'Silk / browser - version like Chrome / chrome - version Safari / webkit - version'}
+        url = 'https://rabota.by/search/' \
+              'vacancy?L_is_autosearch=false&area=16&clusters=true&enable_snippets=true&text=python&page=0'
+        response = HTTPClient.get(url, headers=headers)
+        lxml_text = RabotaByParser.get_lxml(response.text)
+        list_id = RabotaByParser.get_list_of_vacancy_id(lxml_text)
+        return len(list_id)

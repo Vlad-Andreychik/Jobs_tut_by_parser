@@ -23,6 +23,9 @@ class RabotaByParser:
 
     @staticmethod
     def get_amount_of_pages(source):
+        """
+        Returns amount of pages for query 
+        """
         soup = BeautifulSoup(source, 'lxml')
         span = soup.find('span', class_='pager-item-not-in-short-range')
         return span.text
@@ -100,6 +103,9 @@ class RabotaByParser:
 
     @staticmethod
     def get_description_for_first_vacancy():
+        """
+        Returns description for first vacancy
+        """
         headers = {
             'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/webkit-version (KHTML, like Gecko) '
                           'Silk / browser - version like Chrome / chrome - version Safari / webkit - version'}
@@ -116,6 +122,9 @@ class RabotaByParser:
 
     @staticmethod
     def get_avg_occurrences_for_words():
+        """
+        Returns average amount of occurrences for words python, linux, flask
+        """
         headers = {
             'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/webkit-version (KHTML, like Gecko) '
                           'Silk / browser - version like Chrome / chrome - version Safari / webkit - version'}

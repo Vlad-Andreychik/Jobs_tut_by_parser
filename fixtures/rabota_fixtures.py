@@ -69,14 +69,23 @@ def amount_vacancies_on_one_page():
 
 @pytest.fixture
 def avg_occurrences_for_word_python():
+    """
+    Returns average amount of occurrences for word python
+    """
     return RabotaByParser.get_avg_occurrences_for_words()[0]
 
 
 @pytest.fixture
 def avg_occurrences_for_word_linux():
+    """
+    Returns average amount of occurrences for word linux
+    """
     return RabotaByParser.get_avg_occurrences_for_words()[1]
 
 
 @pytest.fixture
 def avg_occurrences_for_word_flask():
+    """
+        Returns average amount of occurrences for word flask
+    """
     return RabotaByParser.get_avg_occurrences_for_words()[2]

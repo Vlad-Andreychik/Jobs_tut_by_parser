@@ -1,6 +1,7 @@
-import math
-
-from models.parser_jobs_tut_by import RabotaByParser
+"""
+Module contains tests for jobs.tut.by that is written with
+parser_jobs_tut_by.py and rabota_fixtures.by
+"""
 
 
 def test_connection(get_response):
@@ -8,31 +9,27 @@ def test_connection(get_response):
 
 
 def test_shotgun_not_found(get_query_shotgun):
-    assert 'По запросу «shotgun» ничего не найдено' in get_query_shotgun.text, 'Query give responses'
+    assert 'По запросу «shotgun» ничего не найдено' in get_query_shotgun.text, 'Something going wrong for "shotgun" query'
 
 
-def test_occurrence_of_the_words(get_description_for_first_vacancy, avg_occurrences_for_word_python,
-                                 avg_occurrences_for_word_linux, avg_occurrences_for_word_flask):
-    description = get_description_for_first_vacancy
-    count_python = RabotaByParser.count_word('python', description)
-    count_linux = RabotaByParser.count_word('linux', description)
-    count_flask = RabotaByParser.count_word('flask', description)
-    assert count_python in range(avg_occurrences_for_word_python[0] - 1, avg_occurrences_for_word_python[0] + 2)
-    assert count_linux in range(avg_occurrences_for_word_linux[1] - 1, avg_occurrences_for_word_linux[1] + 2)
-    assert count_flask in range(avg_occurrences_for_word_flask[2] - 1, avg_occurrences_for_word_flask[2] + 2)
+def test_occurrence_of_the_words(avg_occur_for_python, avg_occur_for_linux, avg_occur_for_flask,
+                                 occur_python_on_first_vacancy, occur_linux_on_first_vacancy,
+                                 occur_flask_on_first_vacancy):
+    assert occur_python_on_first_vacancy in range(avg_occur_for_python - 1, avg_occur_for_python + 2),\
+        'Occurrence of word "python" is out of boundaries avg +- 1'
+    assert occur_linux_on_first_vacancy in range(avg_occur_for_linux - 1, avg_occur_for_linux + 2),\
+        'Occurrence of word "linux" is out of boundaries avg +- 1'
+    assert occur_flask_on_first_vacancy in range(avg_occur_for_flask - 1, avg_occur_for_flask + 2),\
+        'Occurrence of word "flask" is out of boundaries avg +- 1'
 
 
 def test_amount_vacancies_on_one_page(amount_vacancies_on_one_page):
     assert amount_vacancies_on_one_page == 50, 'Incorrect amount of vacancies on one page'
 
 
-def test_accordance_amount_pages_for_amount_of_vacancies(amount_of_vacancies_founded_for_python,
-                                                         amount_vacancies_on_one_page,
-                                                         get_response):
-    actual_number_of_pages = RabotaByParser.amount_of_pages(get_response.text)
-    estimated_number_of_pages = math.ceil(amount_of_vacancies_founded_for_python / amount_vacancies_on_one_page)
-    assert estimated_number_of_pages == int(actual_number_of_pages), 'Incorrect amount of pages'
+def test_accordance_amount_pages_for_amount_of_vacancies(estimated_number_of_pages, amount_of_pages):
+    assert estimated_number_of_pages == amount_of_pages, 'Incorrect amount of pages'
 
 
 def test_wrong_url(get_response_from_wrong_url):
-    assert get_response_from_wrong_url.status_code == 404, 'Correct url entered'
+    assert get_response_from_wrong_url.status_code == 404, "Response didn't return 404 code"

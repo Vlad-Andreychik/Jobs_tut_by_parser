@@ -1,9 +1,12 @@
+"""
+Module is written for making http-requests
+"""
 import requests
 
 
 class HTTPClient:
     """
-    HTTP client for jobs.tut.by
+    HTTP client for requests
     """
 
     @staticmethod

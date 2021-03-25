@@ -1,3 +1,6 @@
+"""
+Script finds info about occurrences of words 'python', 'linux', 'flask' in each vacancy for query 'python'
+"""
 from clients.http_client import HTTPClient
 from models.parser_jobs_tut_by import RabotaByParser
 

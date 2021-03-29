@@ -100,4 +100,18 @@ class RabotaByParser:
         """
         soup = BeautifulSoup(query_content, 'lxml')
         pages = soup.findAll('a', class_='bloko-button HH-Pager-Control')
-        return pages[-1].text
+        return int(pages[-1].text)
+
+    @staticmethod
+    def find_text_by_pattern(pattern, source):
+        """
+        Returns a list containing all matches for pattern in source
+        """
+        return re.findall(pattern, source)
+
+    @staticmethod
+    def find_html_element_by_class(source, element, class_value):
+        """
+        Returns html-element founded by class
+        """
+        return source.find(element, class_=class_value)

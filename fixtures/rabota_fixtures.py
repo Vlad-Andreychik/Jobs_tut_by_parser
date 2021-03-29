@@ -135,7 +135,7 @@ def avg_occur_for_python(get_response):
 @pytest.fixture
 def avg_occur_for_linux(get_response):
     """
-    Returns average amount of occurrences for word linux
+    Returns average amount of occurrences for word python
     """
     headers = {
         'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/webkit-version (KHTML, like Gecko) '
@@ -166,7 +166,7 @@ def avg_occur_for_linux(get_response):
 @pytest.fixture
 def avg_occur_for_flask(get_response):
     """
-    Returns average amount of occurrences for word flask
+    Returns average amount of occurrences for word python
     """
     headers = {
         'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/webkit-version (KHTML, like Gecko) '
@@ -199,10 +199,9 @@ def amount_of_vacancies_founded_for_python(get_response):
     """
     Returns amount of vacancies founded from query
     """
-    lxml_text = RabotaByParser.get_lxml(get_response.text)
-    h1_text = lxml_text.find('h1', class_='bloko-header-1').text
-    pattern = '\d+'
-    return int(re.findall(pattern, h1_text)[0])
+    h1_text = RabotaByParser.find_html_element_by_class(RabotaByParser.get_lxml(get_response.text), 'h1',
+                                                        'bloko-header-1').text
+    return int(RabotaByParser.find_text_by_pattern('\d+', h1_text)[0])
 
 
 @pytest.fixture
@@ -228,4 +227,4 @@ def amount_of_pages(get_response):
     """
     Returns actual number of pages for query
     """
-    return int(RabotaByParser.amount_of_pages(get_response.text))
+    return RabotaByParser.amount_of_pages(get_response.text)
